@@ -8,17 +8,26 @@ export interface TodoEl {
 
 export class TodoStore {
 	todos: TodoEl[] = [];
+	currentTodoProcessing?: TodoEl = undefined;
 
 	constructor() {
-		makeObservable(this, {
-			todos: observable,
-			addTodo: action,
-			toggleTodo: action,
-			removeTodo: action,
-			unfinishedTodos: computed,
-			finishedTodos: computed,
-			allTodos: computed,
-		});
+		makeObservable(
+			this,
+			{
+				todos: observable,
+				currentTodoProcessing: observable,
+				addTodo: action,
+				toggleTodo: action,
+				removeTodo: action,
+				setTodoProcessing: action,
+				unfinishedTodos: computed,
+				finishedTodos: computed,
+				allTodos: computed,
+			},
+			{
+				autoBind: true,
+			},
+		);
 	}
 
 	addTodo(content: string) {
@@ -31,13 +40,28 @@ export class TodoStore {
 	}
 
 	toggleTodo(id: string) {
-		const todo = this.todos.find(todo => todo.id === id);
+		const todo = this.todos?.find(todo => todo.id === id);
 		if (todo) {
 			todo.isDone = !todo.isDone;
 		}
 	}
 
+	setTodoProcessing(id: string) {
+		console.log({
+			id,
+			todos: this.todos,
+		});
+		this.currentTodoProcessing = this.todos?.find(todo => todo.id === id);
+		console.log({
+			currentTodoProcessing: this.currentTodoProcessing,
+		});
+	}
+
 	removeTodo(id: string) {
+		console.log({
+			id,
+			todos: this.todos,
+		});
 		this.todos = this.todos.filter(todo => todo.id !== id);
 	}
 
@@ -49,6 +73,10 @@ export class TodoStore {
 	}
 	get allTodos() {
 		return this.todos;
+	}
+
+	get GetTodoProcessing() {
+		return this.currentTodoProcessing;
 	}
 }
 

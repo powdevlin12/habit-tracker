@@ -4,54 +4,31 @@ import TodoInput from './components/TodoInput';
 import TodoList from './components/todo-list';
 import { observer } from 'mobx-react';
 import { todoStore } from './store/todoStore';
-export interface TodoItem {
-	id: string;
-	content: string;
-}
-
-interface TodoState {
-	todos: TodoItem[];
-}
+// Removed unused TodoItem interface
+// Removed unused TodoState interface
 
 @observer
-class Todo extends React.Component<{}, TodoState> {
-	constructor(props: {}) {
-		super(props);
-		this.state = {
-			todos: [],
-		};
-	}
+class Todo extends React.Component {
+	// Removed TodoState from Component generic
+	// Removed constructor and local state
 
 	handleAdd = (text: string) => {
-		this.setState(prevState => ({
-			todos: [
-				...prevState.todos,
-				{
-					id: Date.now().toString(),
-					content: text,
-				},
-			],
-		}));
-
+		// Removed local state update
 		if (text.trim()) {
-			todoStore.addTodo(text);
+			todoStore.addTodo(text); // Only interact with the store
 		}
 	};
 
-	handleDelete = (id: string) => {
-		this.setState(prevState => ({
-			todos: prevState.todos.filter(todo => todo.id !== id),
-		}));
-	};
+	// Removed handleDelete method
 
 	render() {
-		console.log('render chạy');
+		// Removed console.log for cleaner code, can be added back if needed
 		return (
 			<View style={styles.container}>
 				<Text style={{ fontSize: 24, fontWeight: '500' }}>My todo app</Text>
 				<View style={styles.body}>
 					<TodoInput onAdd={this.handleAdd} />
-					<TodoList todos={this.state.todos} onDelete={this.handleDelete} />
+					<TodoList />
 				</View>
 			</View>
 		);

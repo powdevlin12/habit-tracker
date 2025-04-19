@@ -5,6 +5,7 @@ import {
 	StyleProp,
 	ViewStyle,
 	FlexStyle,
+	TouchableOpacity,
 } from 'react-native';
 
 interface RowProps {
@@ -16,6 +17,7 @@ interface RowProps {
 	flexWrap?: FlexStyle['flexWrap'];
 	gap?: FlexStyle['gap'];
 	columnGap?: FlexStyle['columnGap']; // More specific gap
+	onPress?: () => void; // Optional onPress prop
 }
 
 const Row: React.FC<RowProps> = ({
@@ -27,6 +29,7 @@ const Row: React.FC<RowProps> = ({
 	flexWrap,
 	gap,
 	columnGap,
+	onPress, // Optional onPress prop
 }) => {
 	// Combine base styles, flex props, and custom style prop
 	const combinedStyle: StyleProp<ViewStyle> = [
@@ -42,7 +45,13 @@ const Row: React.FC<RowProps> = ({
 		style, // Apply custom style last to allow overrides
 	];
 
-	return <View style={combinedStyle}>{children}</View>;
+	const Container = onPress ? TouchableOpacity : View;
+
+	return (
+		<Container style={combinedStyle} onPress={onPress}>
+			{children}
+		</Container>
+	);
 };
 
 const styles = StyleSheet.create({

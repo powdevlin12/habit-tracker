@@ -1,12 +1,16 @@
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import React, { Component } from 'react';
 import Column from '../../components/column';
+import { reaction } from 'mobx';
+import { todoStore } from '../store/todoStore';
 
 interface TodoInputProps {
 	onAdd: (text: string) => void;
 }
 
 export class TodoInput extends Component<TodoInputProps> {
+	disposerReaction!: () => void;
+
 	state = {
 		text: '',
 	};
@@ -18,6 +22,19 @@ export class TodoInput extends Component<TodoInputProps> {
 		this.props.onAdd(this.state.text);
 		this.setState({ text: '' });
 	};
+
+	componentDidMount(): void {
+		this.disposerReaction = reaction(
+			() => todoStore.currentTodoProcessing?.id,
+			() => {
+				console.log('Change todo processing');
+			},
+		);
+	}
+
+	componentWillUnmount() {
+		this.disposerReaction?.();
+	}
 
 	render() {
 		return (

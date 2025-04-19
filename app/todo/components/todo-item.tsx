@@ -1,65 +1,80 @@
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import React, { Component, PureComponent } from 'react';
+import React, { Component, useEffect } from 'react'; // Removed PureComponent
 import Row from '../../components/row';
-import { TodoItem } from '..';
+// Removed incorrect import: import { TodoItem } from '..';
 import { Ionicons } from '@expo/vector-icons';
 import { observer } from 'mobx-react';
-import { TodoEl } from '../store/todoStore';
+import { TodoEl, todoStore } from '../store/todoStore'; // Import todoStore
+import { autorun } from 'mobx';
 
 type TodoItemProps = {
 	todo: TodoEl;
-	onDelete?: (id: string) => void;
+	// Removed onDelete prop: onDelete?: (id: string) => void;
 };
 
-@observer
-export class TodoItemComponent extends Component<TodoItemProps> {
-	constructor(props: TodoItemProps) {
-		super(props);
-		this.state = {
-			todoContent: '',
-		};
-	}
+// @observer
+// export class TodoItemComponent extends Component<TodoItemProps> {
+// 	// Removed constructor and local state
 
-	// shouldComponentUpdate(
-	// 	nextProps: Readonly<TodoItemProps>,
-	// 	nextState: Readonly<{}>,
-	// 	nextContext: any,
-	// ): boolean {
-	// 	return nextProps.todo.content !== this.props.todo.content;
-	// }
+// 	// Removed commented out shouldComponentUpdate
+// 	// shouldComponentUpdate(
+// 	// 	nextProps: Readonly<TodoItemProps>,
+// 	// 	nextState: Readonly<{}>,
+// 	// 	nextContext: any,
+// 	// ): boolean {
+// 	// 	return nextProps.todo.content !== this.props.todo.content;
+// 	// }
 
-	handleDelete = () => {
-		if (this.props.onDelete) {
-			this.props.onDelete(this.props.todo.id);
-		}
+// 	handleDelete = () => {
+// 		// Call store action directly
+// 		todoStore.removeTodo(this.props.todo.id);
+// 	};
+
+// 	// Removed getDerivedStateFromProps
+
+// 	render() {
+// 		// Removed console.log
+// 		return (
+// 			<View style={styles.container}>
+// 				<Row justifyContent='space-between' style={styles.row}>
+// 					{/* Display content directly from props */}
+// 					<Text style={styles.todoText}>{this.props.todo.content}</Text>
+// 					<TouchableOpacity
+// 						onPress={this.handleDelete}
+// 						style={styles.deleteButton}
+// 					>
+// 						<Ionicons name='trash-outline' size={20} color='#ff6b6b' />
+// 					</TouchableOpacity>
+// 				</Row>
+// 			</View>
+// 		);
+// 	}
+// }
+
+const TodoItemComponent: React.FC<TodoItemProps> = observer(({ todo }) => {
+	const handleDelete = () => {
+		todoStore.removeTodo(todo.id);
 	};
 
-	static getDerivedStateFromProps(
-		props: Readonly<TodoItemProps>,
-		state: Readonly<{}>,
-	): any {
-		return {
-			todoContent: `${props.todo.content} + 123`,
-		};
-	}
+	const handlePress = () => {
+		todoStore.setTodoProcessing(todo.id);
+	};
 
-	render() {
-		console.log(`render ${this.props.todo.content}`);
-		return (
-			<View style={styles.container}>
-				<Row justifyContent='space-between' style={styles.row}>
-					<Text style={styles.todoText}>{this.state.todoContent}</Text>
-					<TouchableOpacity
-						onPress={this.handleDelete}
-						style={styles.deleteButton}
-					>
-						<Ionicons name='trash-outline' size={20} color='#ff6b6b' />
-					</TouchableOpacity>
-				</Row>
-			</View>
-		);
-	}
-}
+	return (
+		<View style={styles.container}>
+			<Row
+				justifyContent='space-between'
+				style={styles.row}
+				onPress={handlePress}
+			>
+				<Text style={styles.todoText}>{todo.content}</Text>
+				<TouchableOpacity onPress={handleDelete} style={styles.deleteButton}>
+					<Ionicons name='trash-outline' size={20} color='#ff6b6b' />
+				</TouchableOpacity>
+			</Row>
+		</View>
+	);
+});
 
 const styles = StyleSheet.create({
 	container: {
