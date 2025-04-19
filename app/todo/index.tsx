@@ -2,7 +2,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import TodoInput from './components/TodoInput';
 import TodoList from './components/todo-list';
-
+import { observer } from 'mobx-react';
+import { todoStore } from './store/todoStore';
 export interface TodoItem {
 	id: string;
 	content: string;
@@ -12,13 +13,16 @@ interface TodoState {
 	todos: TodoItem[];
 }
 
+@observer
 class Todo extends React.Component<{}, TodoState> {
-	state: TodoState = {
-		todos: [],
-	};
+	constructor(props: {}) {
+		super(props);
+		this.state = {
+			todos: [],
+		};
+	}
 
 	handleAdd = (text: string) => {
-		console.log(text);
 		this.setState(prevState => ({
 			todos: [
 				...prevState.todos,
@@ -28,6 +32,10 @@ class Todo extends React.Component<{}, TodoState> {
 				},
 			],
 		}));
+
+		if (text.trim()) {
+			todoStore.addTodo(text);
+		}
 	};
 
 	handleDelete = (id: string) => {
@@ -37,6 +45,7 @@ class Todo extends React.Component<{}, TodoState> {
 	};
 
 	render() {
+		console.log('render chạy');
 		return (
 			<View style={styles.container}>
 				<Text style={{ fontSize: 24, fontWeight: '500' }}>My todo app</Text>

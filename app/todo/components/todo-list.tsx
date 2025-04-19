@@ -3,22 +3,25 @@ import React, { Component } from 'react';
 import { TodoItem } from '..';
 import { FlashList } from '@shopify/flash-list';
 import TodoItemComponent from './todo-item';
+import { observer } from 'mobx-react';
+import { todoStore } from '../store/todoStore';
 
 interface TodoListProps {
 	todos: TodoItem[];
 	onDelete?: (id: string) => void;
 }
 
+@observer
 export class TodoList extends Component<TodoListProps> {
 	render() {
 		return (
 			<View style={styles.container}>
 				<FlashList
 					renderItem={({ item }) => (
-						<TodoItemComponent todo={item} onDelete={this.props.onDelete} />
+						<TodoItemComponent todo={item} onDelete={() => {}} />
 					)}
 					estimatedItemSize={100}
-					data={this.props.todos}
+					data={todoStore.todos.slice()}
 					keyExtractor={item => item.id}
 					ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
 					ListEmptyComponent={() => <Text>No todos</Text>}
