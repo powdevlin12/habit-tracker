@@ -1,4 +1,11 @@
-import { makeObservable, observable, action, computed } from 'mobx';
+import {
+	makeObservable,
+	observable,
+	action,
+	computed,
+	reaction,
+	IReactionDisposer,
+} from 'mobx';
 
 export interface TodoEl {
 	id: string;
@@ -20,6 +27,7 @@ export class TodoStore {
 				addTodo: action,
 				toggleTodo: action,
 				removeTodo: action,
+				updateTodo: action,
 				setTodoProcessing: action,
 				unfinishedTodos: computed,
 				finishedTodos: computed,
@@ -31,7 +39,7 @@ export class TodoStore {
 		);
 	}
 
-	addTodo(content: string) {
+	addTodo(content: string): void {
 		const todo: TodoEl = {
 			content,
 			id: Date.now().toString(),
@@ -40,46 +48,41 @@ export class TodoStore {
 		this.todos.push(todo);
 	}
 
-	toggleTodo(id: string) {
-		const todo = this.todos?.find(todo => todo.id === id);
+	toggleTodo(id: string): void {
+		const todo = this.todos.find(todo => todo.id === id);
 		if (todo) {
 			todo.isDone = !todo.isDone;
 		}
 	}
 
-	updateTodo(id: string, newContent: string) {
-		const todo = this.todos?.find(todo => todo.id === id);
+	updateTodo(id: string, newContent: string): void {
+		const todo = this.todos.find(todo => todo.id === id);
 		if (todo) {
 			todo.content = newContent;
 		}
 	}
 
-	setTodoProcessing(id: string) {
-		console.log({
-			id,
-			todos: this.todos,
-		});
-		this.currentTodoProcessing = this.todos?.find(todo => todo.id === id);
-		console.log({
-			currentTodoProcessing: this.currentTodoProcessing,
-		});
+	setTodoProcessing(id: string): void {
+		this.currentTodoProcessing = this.todos.find(todo => todo.id === id);
 	}
 
-	removeTodo(id: string) {
-		console.log({
-			id,
-			todos: this.todos,
-		});
+	removeTodo(id: string): void {
 		this.todos = this.todos.filter(todo => todo.id !== id);
 	}
 
-	get unfinishedTodos() {
+	subscribeToTodoProcessingChanges(callback: () => void): IReactionDisposer {
+		return reaction(() => this.currentTodoProcessing?.id, callback);
+	}
+
+	get unfinishedTodos(): TodoEl[] {
 		return this.todos.filter(todo => !todo.isDone);
 	}
-	get finishedTodos() {
+
+	get finishedTodos(): TodoEl[] {
 		return this.todos.filter(todo => todo.isDone);
 	}
-	get allTodos() {
+
+	get allTodos(): TodoEl[] {
 		return this.todos;
 	}
 
@@ -87,7 +90,7 @@ export class TodoStore {
 		return this.currentTodoProcessing;
 	}
 
-	static getInstance() {
+	static getInstance(): TodoStore {
 		if (!TodoStore.instance) {
 			TodoStore.instance = new TodoStore();
 		}

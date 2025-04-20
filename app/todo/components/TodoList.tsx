@@ -1,27 +1,18 @@
 import { StyleSheet, Text, View } from 'react-native';
-import React from 'react'; // Removed Component
-// Removed unused TodoItem import
+import React from 'react';
 import { FlashList } from '@shopify/flash-list';
 import { observer } from 'mobx-react-lite';
-import { todoStore, TodoEl } from '../store/todoStore'; // Added TodoEl import
+import { todoStore, TodoEl } from '../store/todoStore';
 import TodoItem from './todo-item';
 
-// Define props interface if needed, or remove if not used by the functional component directly
-// interface TodoListProps {
-// 	onDelete?: (id: string) => void; // Props might change depending on usage
-// }
-
 const TodoList: React.FC = observer(() => {
-	// Start functional component definition and wrap with observer
 	return (
 		<View style={styles.container}>
 			<FlashList
-				renderItem={({ item }) => (
-					<TodoItem todo={item} /> // Removed onDelete prop
-				)}
+				renderItem={({ item }) => <TodoItem todo={item} />}
 				estimatedItemSize={100}
-				data={todoStore.todos.slice()} // Access store directly
-				keyExtractor={(item: TodoEl) => item.id} // Add type for item
+				data={todoStore.todos.slice()}
+				keyExtractor={(item: TodoEl) => item.id}
 				ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
 				ListEmptyComponent={() => (
 					<Text style={styles.emptyText}>No todos</Text>
@@ -45,4 +36,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default TodoList; // Export the new functional component
+export default TodoList;

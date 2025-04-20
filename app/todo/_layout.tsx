@@ -1,13 +1,17 @@
-import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { Stack } from 'expo-router';
 
-const Layout = () => {
+const TodoLayout: React.FC = () => {
 	return (
 		<Stack>
 			<Stack.Screen
 				name='index'
 				options={{
+					title: 'Todo Manager',
+					headerStyle: {
+						backgroundColor: '#f8f9fa',
+					},
+					headerTintColor: '#333',
 					headerShown: false,
 				}}
 			/>
@@ -15,6 +19,4 @@ const Layout = () => {
 	);
 };
 
-export default Layout;
-
-const styles = StyleSheet.create({});
+export default TodoLayout;

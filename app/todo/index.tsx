@@ -1,52 +1,53 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import TodoInput from './components/TodoInput';
-import TodoList from './components/todo-list';
-import { observer } from 'mobx-react';
+import { observer } from 'mobx-react-lite';
 import { todoStore } from './store/todoStore';
+import TodoList from './components/todo-list';
 // Removed unused TodoItem interface
 // Removed unused TodoState interface
 
-@observer
-class Todo extends React.Component {
+const Todo: React.FC = observer(() => {
 	// Removed TodoState from Component generic
 	// Removed constructor and local state
 
-	handleAdd = (text: string) => {
+	const handleAdd = (text: string) => {
 		// Removed local state update
 		if (text.trim()) {
 			todoStore.addTodo(text); // Only interact with the store
 		}
 	};
 
-	handleUpdate = (id: string, newContent: string) => {
+	const handleUpdate = (id: string, newContent: string) => {
 		todoStore.updateTodo(id, newContent);
 	};
 
 	// Removed handleDelete method
 
-	render() {
-		// Removed console.log for cleaner code, can be added back if needed
-		return (
-			<View style={styles.container}>
-				<Text style={{ fontSize: 24, fontWeight: '500' }}>My todo app</Text>
-				<View style={styles.body}>
-					<TodoInput onAdd={this.handleAdd} onUpdate={this.handleUpdate} />
-					<TodoList />
-				</View>
+	return (
+		<View style={styles.container}>
+			<Text style={styles.title}>My todo app</Text>
+			<View style={styles.body}>
+				<TodoInput onAdd={handleAdd} onUpdate={handleUpdate} />
+				<TodoList />
 			</View>
-		);
-	}
-}
+		</View>
+	);
+});
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: 'white',
-		padding: 10,
+		padding: 16,
 	},
 	body: {
 		flex: 1,
+	},
+	title: {
+		fontSize: 24,
+		fontWeight: '500',
+		marginBottom: 16,
 	},
 });
 
