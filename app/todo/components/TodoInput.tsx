@@ -2,32 +2,56 @@ import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import React, { Component } from 'react';
 import Column from '../../components/column';
 import { reaction } from 'mobx';
-import { todoStore } from '../store/todoStore';
-
+import { observer } from 'mobx-react';
+import { TodoStore } from '../store/todoStore';
 interface TodoInputProps {
 	onAdd: (text: string) => void;
+	onUpdate: (id: string, newContent: string) => void;
 }
 
+@observer
 export class TodoInput extends Component<TodoInputProps> {
 	disposerReaction!: () => void;
+	todoStoreInstance = TodoStore.instance;
 
 	state = {
 		text: '',
+		btnTitle: 'Add',
 	};
 	handleChangeText = (text: string) => {
 		this.setState({ text });
 	};
 
-	handleAdd = () => {
-		this.props.onAdd(this.state.text);
+	handlePressBtn = () => {
+		if (this.state.btnTitle === 'Add') {
+			this.props.onAdd(this.state.text);
+		} else {
+			this.props.onUpdate(
+				this.todoStoreInstance.currentTodoProcessing?.id ?? '',
+				this.state.text,
+			);
+		}
+
 		this.setState({ text: '' });
+		this.todoStoreInstance.setTodoProcessing('');
 	};
 
 	componentDidMount(): void {
 		this.disposerReaction = reaction(
-			() => todoStore.currentTodoProcessing?.id,
+			() => this.todoStoreInstance.currentTodoProcessing?.id,
 			() => {
 				console.log('Change todo processing');
+				if (this.todoStoreInstance.currentTodoProcessing) {
+					this.setState({
+						text: this.todoStoreInstance.currentTodoProcessing?.content ?? '',
+						btnTitle: 'Update',
+					});
+				} else {
+					this.setState({
+						text: '',
+						btnTitle: 'Add',
+					});
+				}
 			},
 		);
 	}
@@ -45,7 +69,7 @@ export class TodoInput extends Component<TodoInputProps> {
 					onChangeText={this.handleChangeText}
 					placeholder='Enter todo'
 				/>
-				<Button title='Add' onPress={this.handleAdd} />
+				<Button title={this.state.btnTitle} onPress={this.handlePressBtn} />
 			</Column>
 		);
 	}

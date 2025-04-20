@@ -1,63 +1,24 @@
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { Component, useEffect } from 'react'; // Removed PureComponent
 import Row from '../../components/row';
-// Removed incorrect import: import { TodoItem } from '..';
 import { Ionicons } from '@expo/vector-icons';
 import { observer } from 'mobx-react';
-import { TodoEl, todoStore } from '../store/todoStore'; // Import todoStore
+import { TodoEl, TodoStore, todoStore } from '../store/todoStore'; // Import todoStore
 import { autorun } from 'mobx';
 
 type TodoItemProps = {
 	todo: TodoEl;
-	// Removed onDelete prop: onDelete?: (id: string) => void;
 };
 
-// @observer
-// export class TodoItemComponent extends Component<TodoItemProps> {
-// 	// Removed constructor and local state
-
-// 	// Removed commented out shouldComponentUpdate
-// 	// shouldComponentUpdate(
-// 	// 	nextProps: Readonly<TodoItemProps>,
-// 	// 	nextState: Readonly<{}>,
-// 	// 	nextContext: any,
-// 	// ): boolean {
-// 	// 	return nextProps.todo.content !== this.props.todo.content;
-// 	// }
-
-// 	handleDelete = () => {
-// 		// Call store action directly
-// 		todoStore.removeTodo(this.props.todo.id);
-// 	};
-
-// 	// Removed getDerivedStateFromProps
-
-// 	render() {
-// 		// Removed console.log
-// 		return (
-// 			<View style={styles.container}>
-// 				<Row justifyContent='space-between' style={styles.row}>
-// 					{/* Display content directly from props */}
-// 					<Text style={styles.todoText}>{this.props.todo.content}</Text>
-// 					<TouchableOpacity
-// 						onPress={this.handleDelete}
-// 						style={styles.deleteButton}
-// 					>
-// 						<Ionicons name='trash-outline' size={20} color='#ff6b6b' />
-// 					</TouchableOpacity>
-// 				</Row>
-// 			</View>
-// 		);
-// 	}
-// }
-
 const TodoItemComponent: React.FC<TodoItemProps> = observer(({ todo }) => {
+	const todosStoreInstance = TodoStore.instance;
+
 	const handleDelete = () => {
-		todoStore.removeTodo(todo.id);
+		todosStoreInstance.removeTodo(todo.id);
 	};
 
 	const handlePress = () => {
-		todoStore.setTodoProcessing(todo.id);
+		todosStoreInstance.setTodoProcessing(todo.id);
 	};
 
 	return (

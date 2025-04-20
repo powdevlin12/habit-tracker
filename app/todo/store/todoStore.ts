@@ -7,6 +7,7 @@ export interface TodoEl {
 }
 
 export class TodoStore {
+	static instance: TodoStore;
 	todos: TodoEl[] = [];
 	currentTodoProcessing?: TodoEl = undefined;
 
@@ -46,6 +47,13 @@ export class TodoStore {
 		}
 	}
 
+	updateTodo(id: string, newContent: string) {
+		const todo = this.todos?.find(todo => todo.id === id);
+		if (todo) {
+			todo.content = newContent;
+		}
+	}
+
 	setTodoProcessing(id: string) {
 		console.log({
 			id,
@@ -78,6 +86,13 @@ export class TodoStore {
 	get GetTodoProcessing() {
 		return this.currentTodoProcessing;
 	}
+
+	static getInstance() {
+		if (!TodoStore.instance) {
+			TodoStore.instance = new TodoStore();
+		}
+		return TodoStore.instance;
+	}
 }
 
-export const todoStore = new TodoStore();
+export const todoStore = TodoStore.getInstance();

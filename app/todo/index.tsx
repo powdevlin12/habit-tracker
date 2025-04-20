@@ -19,6 +19,10 @@ class Todo extends React.Component {
 		}
 	};
 
+	handleUpdate = (id: string, newContent: string) => {
+		todoStore.updateTodo(id, newContent);
+	};
+
 	// Removed handleDelete method
 
 	render() {
@@ -27,7 +31,7 @@ class Todo extends React.Component {
 			<View style={styles.container}>
 				<Text style={{ fontSize: 24, fontWeight: '500' }}>My todo app</Text>
 				<View style={styles.body}>
-					<TodoInput onAdd={this.handleAdd} />
+					<TodoInput onAdd={this.handleAdd} onUpdate={this.handleUpdate} />
 					<TodoList />
 				</View>
 			</View>
